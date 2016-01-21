@@ -112,10 +112,14 @@
 
 + (MagicalRecordStack *)setupiCloudStackWithLocalStoreNamed:(NSString *)localStore
 {
+#if !TARGET_OS_WATCH
     ClassicSQLiteMagicalRecordStack *stack = [[ClassicSQLiteMagicalRecordStack alloc] initWithStoreNamed:localStore];
     stack.storeOptions = @{NSPersistentStoreUbiquitousContentNameKey : localStore};
     [MagicalRecordStack setDefaultStack:stack];
     return stack;
+#else
+    return nil;
+#endif
 }
 
 @end

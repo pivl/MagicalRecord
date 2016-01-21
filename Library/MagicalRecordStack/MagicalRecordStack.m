@@ -176,19 +176,24 @@ static MagicalRecordStack *defaultStack;
 - (void)setApplicationWillResignActive:(NSNotificationCenter *)applicationWillResignActive
 {
     NSString *notificationName = nil;
-#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_WATCH
+    notificationName = nil;
+#elif TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
     notificationName = UIApplicationWillTerminateNotification;
 #elif TARGET_OS_MAC
     notificationName = NSApplicationWillTerminateNotification;
 #endif
-    [_applicationWillResignActive removeObserver:self
-                                            name:notificationName
-                                          object:nil];
-    _applicationWillResignActive = applicationWillResignActive;
-    [_applicationWillResignActive addObserver:self
-                                     selector:@selector(autoSaveHandle:)
-                                         name:notificationName
-                                       object:nil];
+    
+    if (notificationName) {
+        [_applicationWillResignActive removeObserver:self
+                                                name:notificationName
+                                              object:nil];
+        _applicationWillResignActive = applicationWillResignActive;
+        [_applicationWillResignActive addObserver:self
+                                         selector:@selector(autoSaveHandle:)
+                                             name:notificationName
+                                           object:nil];
+    }
 }
 
 - (BOOL)saveOnApplicationWillTerminate
@@ -204,19 +209,24 @@ static MagicalRecordStack *defaultStack;
 - (void)setApplicationWillTerminate:(NSNotificationCenter *)willTerminate
 {
     NSString *notificationName = nil;
-#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_WATCH
+    notificationName = nil;
+#elif TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
     notificationName = UIApplicationWillTerminateNotification;
 #elif TARGET_OS_MAC
     notificationName = NSApplicationWillTerminateNotification;
 #endif
-    [_applicationWillTerminate removeObserver:self
-                                         name:notificationName
-                                       object:nil];
-    _applicationWillTerminate = willTerminate;
-    [_applicationWillTerminate addObserver:self
-                                  selector:@selector(autoSaveHandle:)
-                                      name:notificationName
-                                    object:nil];
+    
+    if (notificationName) {
+        [_applicationWillTerminate removeObserver:self
+                                             name:notificationName
+                                           object:nil];
+        _applicationWillTerminate = willTerminate;
+        [_applicationWillTerminate addObserver:self
+                                      selector:@selector(autoSaveHandle:)
+                                          name:notificationName
+                                        object:nil];
+    }
 }
 
 - (void)autoSaveHandle:(__unused NSNotification *)notification
